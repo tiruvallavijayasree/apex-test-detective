@@ -1,0 +1,10 @@
+{
+  "name": "apex-test-detective",
+  "version": "1.0.0",
+  "description": "Headless Salesforce Apex test failure analysis",
+  "type": "module",
+  "scripts": {
+    "start": "node src/analyzer/failureAnalyzer.js"
+  },
+  "private": true
+}
