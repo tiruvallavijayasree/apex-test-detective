@@ -1,0 +1,8 @@
+Apex Test Results
+
+Test Class: PaymentCheckerTest
+Test Method: testPaymentWithoutCase
+
+System.NullPointerException: Attempt to de-reference a null object
+Class.PaymentChecker.checkPayment: line 42, column 1
+Class.PaymentCheckerTest.testPaymentWithoutCase: line 18, column 1

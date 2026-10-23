@@ -1,0 +1,15 @@
+.agentia/config.user.json
+.agentia/idex
+.agentia/apex.tests.*.json
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# macOS
+.DS_Store
+
+# Local environment secrets
+.env
+.env.*
+!.env.example

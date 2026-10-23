@@ -4,7 +4,9 @@
   "description": "Headless Salesforce Apex test failure analysis",
   "type": "module",
   "scripts": {
-    "start": "node src/analyzer/failureAnalyzer.js"
-  },
+  "start": "node src/analyzer/failureAnalyzer.js",
+  "analyze": "node src/analyzer/analyzeLogFile.js",
+  "test": "node --test"
+},
   "private": true
 }

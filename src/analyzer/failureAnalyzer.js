@@ -1,5 +1,5 @@
 
-function analyzeFailure(errorMessage) {
+export function analyzeFailure(errorMessage) {
     const message = errorMessage.toLowerCase();
 
     if (message.includes("dml") || message.includes("dmlexception")) {
@@ -38,21 +38,4 @@ function analyzeFailure(errorMessage) {
         category: "UNKNOWN",
         diagnosis: "Inspect the exception, stack trace, and relevant Apex code."
     };
-}
-
-const sampleErrors = [
-    "System.DmlException: Insert failed",
-    "System.QueryException: List has no rows for assignment to SObject",
-    "System.AssertException: Assertion Failed",
-    "System.NullPointerException: Attempt to de-reference a null object",
-    "Unexpected Apex failure"
-];
-
-for (const error of sampleErrors) {
-    const result = analyzeFailure(error);
-
-    console.log("\n------------------------------");
-    console.log("Error:", error);
-    console.log("Category:", result.category);
-    console.log("Diagnosis:", result.diagnosis);
 }

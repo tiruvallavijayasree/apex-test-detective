@@ -20,10 +20,3 @@ export function parseStackTrace(stackTrace) {
         stackFrames: locations
     };
 }
-
-const sampleStackTrace = `
-Class.PaymentHandler.calculateTotal: line 47, column 1
-Class.PaymentHandlerTest.testCalculateTotal: line 82, column 1
-`;
-
-console.log(JSON.stringify(parseStackTrace(sampleStackTrace), null, 2));
