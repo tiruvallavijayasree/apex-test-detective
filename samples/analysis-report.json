@@ -1,0 +1,37 @@
+{
+  "project": "Apex Test Detective",
+  "source": "samples/salesforce-test-results.json",
+  "summary": {
+    "total": 20,
+    "passed": 18,
+    "failed": 2,
+    "uniqueFailures": 1,
+    "skipped": 0,
+    "passRate": "90%"
+  },
+  "failures": [
+    {
+      "testClass": "PaymentCheckerTest",
+      "testMethod": "testIntentionalAssertionFailure",
+      "error": "System.AssertException: Assertion Failed: DEMO_FAILURE: Expected payment to be high, but 1000 is below 3000.: Expected: true, Actual: false",
+      "category": "ASSERTION_FAILURE",
+      "diagnosis": "Expected true, but received false. Check whether the test expectation, test data, or business logic is incorrect.",
+      "location": {
+        "failureLocation": {
+          "className": "PaymentCheckerTest",
+          "methodName": "testIntentionalAssertionFailure",
+          "lineNumber": 32,
+          "columnNumber": 1
+        },
+        "stackFrames": [
+          {
+            "className": "PaymentCheckerTest",
+            "methodName": "testIntentionalAssertionFailure",
+            "lineNumber": 32,
+            "columnNumber": 1
+          }
+        ]
+      }
+    }
+  ]
+}

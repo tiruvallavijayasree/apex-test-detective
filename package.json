@@ -1,12 +1,15 @@
+
 {
   "name": "apex-test-detective",
   "version": "1.0.0",
   "description": "Headless Salesforce Apex test failure analysis",
   "type": "module",
   "scripts": {
-  "start": "node src/analyzer/failureAnalyzer.js",
-  "analyze": "node src/analyzer/analyzeLogFile.js",
-  "test": "node --test"
-},
+    "start": "node src/analyzer/failureAnalyzer.js",
+    "analyze": "node src/analyzer/analyzeSalesforceResults.js",
+    "report": "node src/analyzer/generateMarkdownReport.js",
+    "pipeline": "node src/analyzer/analyzeSalesforceResults.js samples/apex-test-results.json > samples/analysis-report.json && npm run report",
+    "test": "node --test"
+  },
   "private": true
 }

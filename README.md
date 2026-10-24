@@ -1,63 +1,86 @@
 # Apex Test Detective
 
-**Turn Salesforce Apex test failures into actionable diagnostics.**
+**From Failed Test to Root Cause**
 
-Apex Test Detective is a Node.js CLI prototype that reads Apex test failure logs, classifies common exceptions, extracts test and failure locations, and produces a structured JSON report.
+Apex Test Detective is a Salesforce developer utility that analyzes Apex unit-test result JSON, classifies failed tests, extracts failure locations from stack traces, and generates structured diagnostic reports.
+
+## Problem
+
+Apex test failures can require developers to inspect test messages, stack traces, and assertions manually. This tool helps organize those details into a consistent report.
 
 ## Features
 
-- Classifies null pointer, SOQL, assertion, DML, and unknown errors.
-- Extracts the test class and test method when present in the log.
-- Parses Apex stack frames, including class, method, line, and column.
-- Produces a JSON diagnosis report.
-- Includes automated tests using Node.js's built-in test runner.
+- Reads Salesforce CLI Apex test-result JSON.
+- Summarizes total, passed, and failed tests.
+- Classifies common failures, including assertion, DML, SOQL, null-pointer, and governor-limit errors.
+- Extracts Apex class, method, and line information from available stack traces.
+- Generates JSON and Markdown reports.
+- Includes automated Node.js tests for core analysis functions.
+
+## Architecture
+
+1. **Salesforce CLI:** Runs Apex tests and exports their results.
+2. **Result analyzer:** Reads the JSON output and classifies failures.
+3. **Stack-trace parser:** Extracts available failure-location details.
+4. **Report generator:** Produces a JSON diagnosis report and a readable Markdown summary.
 
 ## Requirements
 
-- Node.js 20 or later
-- No third-party npm packages required
+- Node.js
+- Salesforce CLI (`sf`)
+- An authenticated Salesforce org for collecting real Apex test results
 
-## Setup
+## Run the project
 
-```bash
-git clone <your-repository-url>
-cd apex-test-detective
-```
-
-No dependency installation is needed for the current prototype.
-
-## Run the analyzer
-
-```bash
-node src/analyzer/analyzeLogFile.js samples/apex-test-failure.log
-```
-
-The output is a JSON report containing the input file, test class and method, detected exception, category, diagnosis, failure location, and stack frames.
-
-## Run automated tests
+Install or verify Node.js, then run the local tests:
 
 ```bash
 npm test
 ```
 
-The test suite verifies exception classification and stack-trace parsing.
+Analyze a Salesforce CLI result file:
 
-## Example
+```bash
+node src/analyzer/analyzeSalesforceResults.js samples/apex-test-results.json
+```
 
-The included sample log represents a `System.NullPointerException` in `PaymentChecker.checkPayment` at line 42. It is sample data, not a live failure fetched from a Salesforce org.
+Generate the JSON report:
 
-## Current limitations
+```bash
+node src/analyzer/analyzeSalesforceResults.js samples/apex-test-results.json > samples/analysis-report.json
+```
 
-- The current workflow analyzes a supplied log file; it does not yet fetch Apex test results directly from a Salesforce org.
-- Copado CI/CD or other Agentia API integration is not yet verified.
-- Diagnoses are rule-based and intended to guide investigation, not automatically repair Apex code.
+Generate the Markdown report:
 
-## Roadmap
+```bash
+npm run report
+```
 
-- Integrate a supported source of real Apex test results.
-- Connect Agentia CLI capabilities where authorized.
-- Improve diagnosis specificity and add more automated tests.
+## Example output
 
-## Project status
+The sample dataset contains four test results:
 
-Working local prototype. Salesforce org and Copado service integration must be demonstrated separately before claiming end-to-end integration.
+- Total: 4
+- Passed: 3
+- Failed: 1
+- Pass rate: 75%
+
+The example failure is an assertion failure in `PaymentCheckerTest.testIntentionalAssertionFailure`, at line 32.
+
+## Limitations
+
+- Diagnosis is based on error-message rules, not an independent proof of root cause.
+- Results depend on the fields available in the input JSON.
+- The included sample contains an intentionally created failure.
+- Copado Agentia API integration and AI-generated analysis should be described as implemented only after they have been configured and tested.
+
+## Future enhancements
+
+- Direct integration with supported Copado Agentia APIs.
+- More precise failure correlation across test methods.
+- AI-assisted explanations with evidence from Apex source code.
+- CI/CD pipeline integration and historical failure trends.
+
+## Validation
+
+The local Node.js test suite currently passes six tests. Run `npm test` to verify the current checkout.

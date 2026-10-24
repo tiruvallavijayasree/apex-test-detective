@@ -13,3 +13,6 @@ npm-debug.log*
 .env
 .env.*
 !.env.example
+
+.sf/
+sf-inspection/apex-test-results.json

@@ -1,0 +1,89 @@
+{
+  "status": 100,
+  "result": {
+    "summary": {
+      "failRate": "25%",
+      "failing": 1,
+      "hostname": "https://orgfarm-f0a0ad3834-dev-ed.develop.my.salesforce.com",
+      "orgId": "00Dg800000OdfIVEAZ",
+      "outcome": "Failed",
+      "passRate": "75%",
+      "passing": 3,
+      "skipped": 0,
+      "testRunId": "707g800000qkG8t",
+      "testStartTime": "2026-10-23T05:01:23.000Z",
+      "testsRan": 4,
+      "userId": "005g800000Cl61RAAR",
+      "username": "tvijayasree.106bcf90e220@agentforce.com",
+      "commandTime": "487 ms",
+      "testExecutionTime": "78 ms",
+      "testTotalTime": "78 ms"
+    },
+    "tests": [
+      {
+        "Id": "07Mg8000007I81VEAS",
+        "QueueItemId": "709g800000QPP69AAH",
+        "StackTrace": null,
+        "Message": null,
+        "AsyncApexJobId": "707g800000qkG8tAAE",
+        "MethodName": "testHighPayment",
+        "Outcome": "Pass",
+        "ApexClass": {
+          "Id": "01pg800000EWlADAA1",
+          "Name": "PaymentCheckerTest",
+          "NamespacePrefix": null
+        },
+        "RunTime": 55,
+        "FullName": "PaymentCheckerTest.testHighPayment"
+      },
+      {
+        "Id": "07Mg8000007I81WEAS",
+        "QueueItemId": "709g800000QPP69AAH",
+        "StackTrace": "Class.PaymentCheckerTest.testIntentionalAssertionFailure: line 32, column 1",
+        "Message": "System.AssertException: Assertion Failed: DEMO_FAILURE: Expected payment to be high, but 1000 is below 3000.: Expected: true, Actual: false",
+        "AsyncApexJobId": "707g800000qkG8tAAE",
+        "MethodName": "testIntentionalAssertionFailure",
+        "Outcome": "Fail",
+        "ApexClass": {
+          "Id": "01pg800000EWlADAA1",
+          "Name": "PaymentCheckerTest",
+          "NamespacePrefix": null
+        },
+        "RunTime": 8,
+        "FullName": "PaymentCheckerTest.testIntentionalAssertionFailure"
+      },
+      {
+        "Id": "07Mg8000007I81XEAS",
+        "QueueItemId": "709g800000QPP69AAH",
+        "StackTrace": null,
+        "Message": null,
+        "AsyncApexJobId": "707g800000qkG8tAAE",
+        "MethodName": "testLowPayment",
+        "Outcome": "Pass",
+        "ApexClass": {
+          "Id": "01pg800000EWlADAA1",
+          "Name": "PaymentCheckerTest",
+          "NamespacePrefix": null
+        },
+        "RunTime": 7,
+        "FullName": "PaymentCheckerTest.testLowPayment"
+      },
+      {
+        "Id": "07Mg8000007I81YEAS",
+        "QueueItemId": "709g800000QPP69AAH",
+        "StackTrace": null,
+        "Message": null,
+        "AsyncApexJobId": "707g800000qkG8tAAE",
+        "MethodName": "testPaymentAtThreshold",
+        "Outcome": "Pass",
+        "ApexClass": {
+          "Id": "01pg800000EWlADAA1",
+          "Name": "PaymentCheckerTest",
+          "NamespacePrefix": null
+        },
+        "RunTime": 8,
+        "FullName": "PaymentCheckerTest.testPaymentAtThreshold"
+      }
+    ]
+  }
+}
