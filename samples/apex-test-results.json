@@ -4,8 +4,8 @@
     "summary": {
       "failRate": "25%",
       "failing": 1,
-      "hostname": "https://orgfarm-f0a0ad3834-dev-ed.develop.my.salesforce.com",
-      "orgId": "00Dg800000OdfIVEAZ",
+      "hostname": "REDACTED",
+      "orgId": "REDACTED",
       "outcome": "Failed",
       "passRate": "75%",
       "passing": 3,
@@ -13,8 +13,8 @@
       "testRunId": "707g800000qkG8t",
       "testStartTime": "2026-10-23T05:01:23.000Z",
       "testsRan": 4,
-      "userId": "005g800000Cl61RAAR",
-      "username": "tvijayasree.106bcf90e220@agentforce.com",
+      "userId": "REDACTED",
+      "username": "REDACTED",
       "commandTime": "487 ms",
       "testExecutionTime": "78 ms",
       "testTotalTime": "78 ms"

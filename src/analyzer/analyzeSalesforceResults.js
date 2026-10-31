@@ -3,38 +3,46 @@ import fs from "node:fs";
 import { analyzeFailure } from "./failureAnalyzer.js";
 import { parseStackTrace } from "./stackTraceParser.js";
 
-const filePath =
-  process.argv[2] || "samples/apex-test-results.json";
+const filePath = process.argv[2] || "samples/apex-test-results.json";
 
 function firstDefined(...values) {
-  return values.find(
-    (value) => value !== undefined && value !== null
-  );
+  return values.find((value) => value !== undefined && value !== null);
+}
+
+function getTests(payload) {
+  if (Array.isArray(payload.tests)) return payload.tests;
+  if (Array.isArray(payload.records)) return payload.records;
+  return [];
 }
 
 function normalizeTest(test) {
   const error =
     test.Message ??
-    test.error ??
+    test.message ??
     test.ErrorMessage ??
+    test.errorMessage ??
+    (typeof test.error === "string" ? test.error : test.error?.message) ??
     "Test failed without an error message";
 
-  const stackTrace = test.StackTrace ?? test.stackTrace ?? "";
+  const stackTrace = String(test.StackTrace ?? test.stackTrace ?? "");
   const parsedLocation = parseStackTrace(stackTrace);
   const diagnosis = analyzeFailure(error);
+  const fullName = test.FullName ?? test.fullName ?? "";
+  const parts = fullName.split(".");
 
   const apexClass =
     test.ApexClass?.Name ??
     test.className ??
     test.testClass ??
+    (parts.length > 1 ? parts[0] : undefined) ??
     parsedLocation.failureLocation?.className ??
-    test.ApexClassId ??
     "Unknown";
 
   const method =
     test.MethodName ??
+    test.methodName ??
     test.method ??
-    test.testMethod ??
+    (parts.length > 1 ? parts.slice(1).join(".") : undefined) ??
     parsedLocation.failureLocation?.methodName ??
     "Unknown";
 
@@ -54,85 +62,42 @@ try {
   }
 
   const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  const payload = raw.result ?? raw;
-  const isSalesforceQuery = Array.isArray(payload.records);
-  const summary = payload.summary ?? {};
+  const payload = raw.result ?? raw.data ?? raw;
+  const summary = payload.summary ?? raw.summary ?? {};
 
-  // Salesforce Tooling API query results use result.records.
-  // Existing sample files use tests or failedTests.
-  const tests = isSalesforceQuery
-    ? payload.records
-    : payload.tests ?? [];
+  const tests = getTests(payload);
+  const outcome = (test) =>
+    String(test.Outcome ?? test.outcome ?? test.status ?? "").toLowerCase();
 
-  const failedTests = isSalesforceQuery
-    ? tests.filter(
-        (test) =>
-          String(test.Outcome ?? test.outcome ?? "").toLowerCase() ===
-          "fail"
-      )
-    : [
-        ...(payload.failedTests ?? []),
-        ...tests.filter(
-          (test) =>
-            String(test.Outcome ?? test.outcome ?? "").toLowerCase() ===
-            "fail"
-        )
-      ];
+  const failedTests = tests.filter((test) =>
+    ["fail", "failed", "failing"].includes(outcome(test))
+  );
 
-  const passedTests = isSalesforceQuery
-    ? tests.filter(
-        (test) =>
-          String(test.Outcome ?? test.outcome ?? "").toLowerCase() ===
-          "pass"
-      )
-    : tests.filter(
-        (test) =>
-          String(test.Outcome ?? test.outcome ?? "").toLowerCase() ===
-          "pass"
-      );
+  const passedTests = tests.filter((test) =>
+    ["pass", "passed", "passing"].includes(outcome(test))
+  );
 
-  const normalizedFailures = failedTests.map(normalizeTest);
-
-  // Group repeated failures by class and method.
   const uniqueFailures = [
     ...new Map(
-      normalizedFailures.map((failure) => [
-        `${failure.testClass}.${failure.testMethod}`,
-        failure
-      ])
+      failedTests.map((test) => {
+        const failure = normalizeTest(test);
+        return [`${failure.testClass}.${failure.testMethod}`, failure];
+      })
     ).values()
   ];
 
-  const total = isSalesforceQuery
-    ? firstDefined(payload.totalSize, tests.length)
-    : firstDefined(
-        summary.testsRan,
-        summary.total,
-        payload.testsRan,
-        tests.length,
-        (summary.passing ?? 0) + (summary.failing ?? 0)
-      );
+  const total = Number(firstDefined(
+    summary.testsRan, summary.total, payload.testsRan, tests.length
+  ));
+  const failed = Number(firstDefined(
+    summary.failing, summary.failed, payload.failing, failedTests.length
+  ));
+  const passed = Number(firstDefined(
+    summary.passing, summary.passed, payload.passing,
+    passedTests.length, Math.max(0, total - failed)
+  ));
 
-  const passed = isSalesforceQuery
-    ? passedTests.length
-    : firstDefined(
-        summary.passing,
-        summary.passed,
-        payload.passing,
-        passedTests.length,
-        Math.max(0, total - failedTests.length)
-      );
-
-  const failed = isSalesforceQuery
-    ? failedTests.length
-    : firstDefined(
-        summary.failing,
-        summary.failed,
-        payload.failing,
-        failedTests.length
-      );
-
-  const report = {
+  console.log(JSON.stringify({
     project: "Apex Test Detective",
     source: filePath,
     summary: {
@@ -140,15 +105,11 @@ try {
       passed,
       failed,
       uniqueFailures: uniqueFailures.length,
-      skipped: firstDefined(summary.skipped, payload.skipped, 0),
-      passRate: total
-        ? `${Math.round((passed / total) * 100)}%`
-        : "unknown"
+      skipped: Number(firstDefined(summary.skipped, payload.skipped, 0)),
+      passRate: total ? `${Math.round((passed / total) * 100)}%` : "unknown"
     },
     failures: uniqueFailures
-  };
-
-  console.log(JSON.stringify(report, null, 2));
+  }, null, 2));
 } catch (error) {
   console.error(`Analysis failed: ${error.message}`);
   process.exitCode = 1;

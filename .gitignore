@@ -16,3 +16,7 @@ npm-debug.log*
 
 .sf/
 sf-inspection/apex-test-results.json
+
+# Generated demo and quality-gate output (may contain org identifiers)
+src/output/
+samples/agentia-*
